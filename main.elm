@@ -12,15 +12,12 @@ main =
 
 
 type Msg
-    = Increment
-    | Decrement
-    | Guess Char
+    = Guess Char
 
 
 type alias Model =
     { word : String
     , tried : Set Char
-    , misses : Int
     }
 
 
@@ -33,23 +30,12 @@ model : Model
 model =
     { word = "HELLOWORLD"
     , tried = Set.empty
-    , misses = 0
     }
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
-            { model
-                | misses = model.misses + 1
-            }
-
-        Decrement ->
-            { model
-                | misses = model.misses - 1
-            }
-
         Guess letter ->
             { model
                 | tried = Set.insert letter model.tried
@@ -58,7 +44,6 @@ update msg model =
 
 showword : Model -> String
 showword model =
-    --  String.map (maskletter model.tried) model.word
     convertWord model.tried model.word
 
 
@@ -87,13 +72,21 @@ alphabuttons =
     div [] (List.map createButton alphabet)
 
 
+misses : String -> Set Char -> Int
+misses word guesses =
+    --Set.size (Set.filter (Basics.always True) guesses)
+    Set.size (Set.diff guesses (Set.fromList (String.toList word)))
+
+
+contains : String -> Char -> Bool
+contains word c =
+    String.contains (toString c) word
+
+
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Decrement ] [ text "A" ]
-        , div [] [ text (toString model.misses) ]
-        , button [ onClick Increment ] [ text "B" ]
-        , div [] [ text (toString model.tried) ]
+        [ div [] [ text (toString model.tried) ]
         , alphabuttons
         , div [] [ text (showword model) ]
         ]

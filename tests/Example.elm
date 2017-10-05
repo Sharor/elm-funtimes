@@ -42,4 +42,44 @@ suite =
                         Set.fromList [ 'C', 'D', 'E' ]
                 in
                     Expect.equal (convertWord known str) "_E_______D"
+        , test "misses base case" <|
+            \_ ->
+                let
+                    str =
+                        "HELLOWORLD"
+
+                    known =
+                        Set.fromList []
+                in
+                    Expect.equal (misses str known) 0
+        , test "count misses - all wrong" <|
+            \_ ->
+                let
+                    str =
+                        "HELLOWORLD"
+
+                    known =
+                        Set.fromList [ 'X', 'Y' ]
+                in
+                    Expect.equal (misses str known) 2
+        , test "count misses - all correct" <|
+            \_ ->
+                let
+                    str =
+                        "HELLOWORLD"
+
+                    known =
+                        Set.fromList [ 'H', 'R' ]
+                in
+                    Expect.equal (misses str known) 0
+        , test "count misses - some wrong" <|
+            \_ ->
+                let
+                    str =
+                        "HELLOWORLD"
+
+                    known =
+                        Set.fromList [ 'C', 'D', 'E' ]
+                in
+                    Expect.equal (misses str known) 1
         ]
