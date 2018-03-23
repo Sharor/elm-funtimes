@@ -1,12 +1,14 @@
 module Main exposing (..)
 
 import Html exposing (Html, button, div, text)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Set exposing (..)
 import String exposing (..)
 import Char
 
 
+main : Program Never Model Msg
 main =
     Html.beginnerProgram { model = model, view = view, update = update }
 
@@ -60,16 +62,50 @@ maskletter tried letter =
         '_'
 
 
-createButton char =
-    button [ onClick (Guess char) ] [ text (String.fromChar char) ]
+buttonEnabled : Char -> Html Msg
+buttonEnabled char =
+    button
+        [ style
+            [ ( "backgroundColor", "lightblue" )
+            , ( "height", "30px" )
+            , ( "width", "30px" )
+            , ( "margin", "5px" )
+            ]
+        , onClick (Guess char)
+        ]
+        [ text (String.fromChar char) ]
 
 
+buttonDisabled : Char -> Html Msg
+buttonDisabled char =
+    button
+        [ style
+            [ ( "backgroundColor", "grey" )
+            , ( "height", "30px" )
+            , ( "width", "30px" )
+            , ( "margin", "5px" )
+            ]
+        , disabled True
+        ]
+        [ text (String.fromChar char) ]
+
+
+createButton : Set Char -> Char -> Html Msg
+createButton tried char =
+    if member char tried then
+        buttonDisabled char
+    else
+        buttonEnabled char
+
+
+alphabet : List Char
 alphabet =
     charRange 'A' 'Z'
 
 
-alphabuttons =
-    div [] (List.map createButton alphabet)
+alphabuttons : Set Char -> Html Msg
+alphabuttons tried =
+    div [] (List.map (createButton tried) alphabet)
 
 
 misses : String -> Set Char -> Int
@@ -87,6 +123,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [] [ text (toString model.tried) ]
-        , alphabuttons
+        , alphabuttons model.tried
         , div [] [ text (showword model) ]
+        , div [] [ text (toString (misses model.word model.tried)) ]
         ]
