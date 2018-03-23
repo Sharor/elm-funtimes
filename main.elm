@@ -13,6 +13,12 @@ main =
     Html.beginnerProgram { model = model, view = view, update = update }
 
 
+type GameState
+    = Lost
+    | Won
+    | Ongoing
+
+
 type Msg
     = Guess Char
 
@@ -119,14 +125,29 @@ contains word c =
     String.contains (toString c) word
 
 
+gamestate : Model -> GameState
+gamestate model =
+    if (misses model.word model.tried) > 5 then
+        Lost
+    else if (showword model) == model.word then
+        Won
+    else
+        Ongoing
+
+
 view : Model -> Html Msg
 view model =
-    if (misses model.word model.tried) > 5 then
-        div [] [ text "YOU ARE DEAD!" ]
-    else
-        div []
-            [ div [] [ text (toString model.tried) ]
-            , alphabuttons model.tried
-            , div [] [ text (showword model) ]
-            , div [] [ text (toString (misses model.word model.tried)) ]
-            ]
+    case (gamestate model) of
+        Lost ->
+            div [] [ text "YOU ARE DEAD!" ]
+
+        Ongoing ->
+            div []
+                [ div [] [ text (toString model.tried) ]
+                , alphabuttons model.tried
+                , div [] [ text (showword model) ]
+                , div [] [ text (toString (misses model.word model.tried)) ]
+                ]
+
+        Won ->
+            div [] [ text "YOU WON!" ]
