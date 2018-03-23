@@ -121,9 +121,12 @@ contains word c =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ div [] [ text (toString model.tried) ]
-        , alphabuttons model.tried
-        , div [] [ text (showword model) ]
-        , div [] [ text (toString (misses model.word model.tried)) ]
-        ]
+    if (misses model.word model.tried) > 5 then
+        div [] [ text "YOU ARE DEAD!" ]
+    else
+        div []
+            [ div [] [ text (toString model.tried) ]
+            , alphabuttons model.tried
+            , div [] [ text (showword model) ]
+            , div [] [ text (toString (misses model.word model.tried)) ]
+            ]
