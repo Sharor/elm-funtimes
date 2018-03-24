@@ -143,9 +143,9 @@ view model =
 
         Ongoing ->
             div []
-                [ div [] [ text (toString model.tried) ]
-                , alphabuttons model.tried
-                , div [] [ text (showword model) ]
+                [ alphabuttons model.tried
+                , div [ style [ ( "letter-spacing", "4px" ) ] ] [ text (showword model) ]
+                , div [] [ text "Wrong guesses: " ]
                 , div [] [ text (toString (misses model.word model.tried)) ]
                 ]
 
